@@ -36,7 +36,6 @@ function catchErr(err, message, file, sendb) {
         .setDescription(`\`${err.message}\n${err.stack}\`\n\n#${message.channel.name}\n<@${message.author.id}>`)
         .setThumbnail("https://i.pinimg.com/originals/e6/a8/44/e6a8448e291d3f3b4d4842fda7ba3c52.jpg")
         .setColor(crimson)
-        .setTimestamp()
     dev.send(errembed)
     if (sendb === "None") return;
     else if (sendb === "Dev") return message.channel.send(`Oops something went wrong on our end! Contact the developer for assistance\n<@${devid}>`)
@@ -106,7 +105,6 @@ client.on("messageDelete", async oldmsg => {
     con.query(`SELECT * FROM lastdel`, (err, rows) => {
         if (rows[0].id != 0) return;
 
-        const bruh = new Date(Date.now())
         if (oldmsg.author.bot == true) return;
         const logchan = client.channels.cache.get(reportchan);
         if (oldmsg.attachments.size > 0) {
@@ -145,11 +143,9 @@ client.on("messageDelete", async oldmsg => {
     })
 });
 client.on("guildBanAdd", (guild, banmem) => {
-    const bruh = new Date(Date.now())
     const logchan = client.channels.cache.get(reportchan);
     let banEmbed = new Discord.MessageEmbed()      //Sends a fancy display of execution information
         .setTitle(`**${banmem.username}** was banned`)
-        .setDescription(`${bruh.toDateString()} at ${bruh.toLocaleTimeString()}`)
         .setAuthor(banmem.username, banmem.avatarURL())
         .setThumbnail("https://media2.giphy.com/media/WXgtdvFFbAYIU/source.gif")
         .setColor(pink)
@@ -157,11 +153,9 @@ client.on("guildBanAdd", (guild, banmem) => {
     logchan.send(banEmbed);
 });
 client.on("guildBanRemove", (guild, unbanmem) => {
-    const bruh = new Date(Date.now())
     const logchan = client.channels.cache.get(reportchan);
     let banEmbed = new Discord.MessageEmbed()      //Sends a fancy display of execution information
         .setTitle(`**${unbanmem.username}** was unbanned`)
-        .setDescription(`${bruh.toDateString()} at ${bruh.toLocaleTimeString()}`)
         .setAuthor(unbanmem.username, unbanmem.avatarURL())
         .setThumbnail("http://38.media.tumblr.com/d9d99d3b8904a38f8108c7eecec1b766/tumblr_ncvx9wgMLi1se015qo1_500.gif")
         .setColor(pink)
