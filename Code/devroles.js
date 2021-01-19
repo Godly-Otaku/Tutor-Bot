@@ -9,9 +9,9 @@ module.exports = {
     class: 'info',
     cooldown: 5,
     args: false,
-    execute(msg, args, client, con, catchErr) {
+    async execute(msg, args, client, con, catchErr) {
         try {
-            con.query(`SELECT * FROM roles`, (err, rows) => {
+            con.query(`SELECT * FROM roles`, async (err, rows) => {
                 if (err) return catchErr(err, msg, `${module.exports.name}.js`, "Dev")
                 if (rows.length < 1) return msg.channel.send("Not enough people")
                 let JSONroles = JSON.stringify(rows);
