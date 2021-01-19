@@ -61,6 +61,8 @@ client.on("message", async msg => {
         if ((command.class === "devcmd") && (msg.author.id != '250072488929787924')) return msg.channel.send("You are not worthy :pensive:");
         if ((command.class === "admin") && (!msg.member.hasPermission("ADMINISTRATOR"))) return msg.channel.send("You are not worthy :pensive:");
         if ((command.class === "moderation") && (!msg.member.hasPermission("MANAGE_MESSAGES"))) return msg.channel.send("You are not worthy :pensive:");
+        if ((command.name === "role") && (msg.channel.id !== '592208635770306560')) return;
+
         if (command.args && !args.length) {
             let reply = `You didn't provide any arguments, ${msg.author.username}!`;
 
@@ -118,6 +120,7 @@ client.on("messageDelete", async oldmsg => {
                     .setTitle(`**${oldmsg.author.username}'s** message was deleted`)
                     .setThumbnail("https://66.media.tumblr.com/7faf76a655814723d93f17aac4223adc/tumblr_p67vmb88qf1wctgsho1_250.jpg")
                     .setColor(pink)
+                    .setDescription(`__Message:__ ${oldmsg.content}\n__Channel:__ ${oldmsg.channel.name}`)
                     .setTimestamp();
                 logchan.send(delmsg);
                 logchan.send(oldimg);
@@ -127,6 +130,7 @@ client.on("messageDelete", async oldmsg => {
                     .setTitle(`**${oldmsg.author.username}'s** message was deleted`)
                     .setThumbnail("https://66.media.tumblr.com/7faf76a655814723d93f17aac4223adc/tumblr_p67vmb88qf1wctgsho1_250.jpg")
                     .setColor(pink)
+                    .setDescription(`__Channel:__ ${oldmsg.channel.name}`)
                     .setTimestamp()
                 logchan.send(delmsg);
                 logchan.send(oldimg);
@@ -137,6 +141,7 @@ client.on("messageDelete", async oldmsg => {
                 .setTitle(`**${oldmsg.author.username}'s** message was deleted`)
                 .setThumbnail("https://66.media.tumblr.com/7faf76a655814723d93f17aac4223adc/tumblr_p67vmb88qf1wctgsho1_250.jpg")
                 .setColor(pink)
+                .setDescription(`__Message:__ ${oldmsg.content}\n__Channel:__ ${oldmsg.channel.name}`)
                 .setTimestamp()
             logchan.send(delmsg);
         }
