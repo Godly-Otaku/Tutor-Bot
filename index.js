@@ -43,7 +43,7 @@ function catchErr(err, message, file, sendb) {
 }
 client.on("ready", () => {
     console.log(`${client.user.username} is now online`);
-    client.user.setActivity("my server", { type: "WATCHING", url: "https://discord.com/invite/SmQ8aEs3CV" });     //Sets what the bot is doing
+    client.user.setActivity("my server", { type: "WATCHING", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" });     //Sets what the bot is doing
     wait(1000)
 });
 client.on("message", async msg => {
@@ -52,14 +52,48 @@ client.on("message", async msg => {
         if (author.bot) return;     //Doesn't let the bot respond to itself
         const args = msg.content.slice(prefix.length).trim().split(/ +/g);      //Takes away the prefix and command to make the array 0 based. Equals everything after
         const commandName = args.shift().toLowerCase();     //The string directly after the prefix. No space allowed
-
+        if ((msg.channel.id === '592208635770306560') && (!msg.member.hasPermission("VIEW_AUDIT_LOG"))) {
+            let member = msg.member;
+            let startname = msg.content.toLowerCase().indexOf("name:")
+            let endname = msg.content.toLowerCase().indexOf("major:");
+            let fname = msg.content.slice(startname + 5, endname).trim();
+            if (!fname) return;
+            msg.channel.send(`Is the name **${fname}** correct for ${member.user.tag}?\n(5 minutes to decide before must be done manually)`)
+            const yes = m => m.content.includes('yes') && m.member.hasPermission("VIEW_AUDIT_LOG") && !m.author.bot;
+            const no = m => m.content.includes('no') && m.member.hasPermission("VIEW_AUDIT_LOG") && !m.author.bot;
+            const yescollector = msg.channel.createMessageCollector(yes, { time: (5 * 60000) });
+            const nocollector = msg.channel.createMessageCollector(no, { time: (5 * 60000) });
+            yescollector.on('collect', async m => {
+                if ((yescollector.collected.size > 0) || (nocollector.collected.size > 0)) return;
+                yescollector.stop();
+                nocollector.stop();
+                member.setNickname(fname)
+                return await msg.channel.send(`${member.user.tag}'s nickname has been set to **${fname}**`);
+            });
+            yescollector.on('end', collected => {
+                if ((collected.size > 0) || (nocollector.collected.size > 0)) return;
+                msg.channel.send("5 minutes have past, must be done manually now");
+                yescollector.stop();
+                return;
+            });
+            nocollector.on('collect', nah => {
+                nocollector.stop();
+                yescollector.stop();
+                msg.channel.send(`If **${fname}** isn't the correct name, please give the correct name`);
+                const newname = m => m.member.hasPermission("VIEW_AUDIT_LOG") && !m.author.bot;
+                const namecollector = msg.channel.createMessageCollector(newname, { time: (5 * 60000) });
+                namecollector.on('collect', async final => {
+                    namecollector.stop();
+                    member.setNickname(final.content);
+                    return await msg.channel.send(`${member.user.tag}'s nickname has been set to **${final}**`);
+                });
+            });
+        }
         const command = client.commands.get(commandName)
             || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
         if (!msg.content.startsWith(prefix)) return;
 
-        if ((command.class === "devcmd") && (msg.author.id != '250072488929787924')) return msg.channel.send("You are not worthy :pensive:");
-        if ((command.class === "admin") && (!msg.member.hasPermission("ADMINISTRATOR"))) return msg.channel.send("You are not worthy :pensive:");
         if ((command.class === "moderation") && (!msg.member.hasPermission("MANAGE_MESSAGES"))) return msg.channel.send("You are not worthy :pensive:");
         if ((command.name === "role") && (msg.channel.id !== '592208635770306560')) return;
 
